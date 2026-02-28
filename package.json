@@ -9,5 +9,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anvitamanoj24/focusflow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anvitamanoj24/focusflow/issues"
+  },
+  "homepage": "https://github.com/anvitamanoj24/focusflow#readme"
 }

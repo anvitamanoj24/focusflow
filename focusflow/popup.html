@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            width: 200px;
+            background: #121212;
+            color: #ff0000;
+            font-family: 'Courier New', monospace;
+            padding: 15px;
+            margin: 0;
+            border: 1px solid #ff0000;
+        }
+        h2 {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+        .stat {
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        #score-display {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            margin: 10px 0;
+        }
+        .mode-tag {
+            color: #fff;
+            background: #444;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>FOCUSFLOW MONITOR</h2>
+    <div class="stat">MODE: <span id="current-mode" class="mode-tag">LOADING...</span></div>
+    <div class="stat">THREAT LEVEL:</div>
+    <span id="score-display">0%</span>
+    <script src="popup.js"></script>
+</body>
+</html>

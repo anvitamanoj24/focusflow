@@ -1,33 +1,32 @@
-import { SignalCollector } from './core/signalCollector.js';
-import { OverloadEngine } from './core/overloadEngine.js';
+// background.js
 import { ModeProfiles } from './core/modeProfiles.js';
-import { WebcamValidator } from './core/webcamValidator.js';
 
-const collector = new SignalCollector();
-const engine = new OverloadEngine();
+let score = 0;
+let currentMode = "NEUTRAL";
 
-// The Heartbeat: Runs every 2 seconds
-setInterval(async () => {
-  const snapshot = collector.getSnapshot();
-  
-  // 1. Detect Mode (Simplified logic for now)
-  const currentMode = "CASUAL_VIDEO"; // This would normally be dynamic
-  const profile = ModeProfiles[currentMode];
-
-  // 2. Calculate Overload Score
-  const score = engine.calculate(snapshot, profile);
-  console.log(`Current Overload Score: ${score.toFixed(2)}`);
-
-  // 3. Threshold Logic
-  if (score > profile.thresholds.T3) {
-    console.warn("⚠️ T3 REACHED: Validation Required.");
-    const isChaotic = await WebcamValidator.validate();
+chrome.runtime.onMessage.addListener((msg) => {
+    if (msg.type === "MODE_CHANGE") currentMode = msg.mode;
     
-    if (isChaotic) {
-      console.error("🚨 STATE: CHAOTIC. Initiating Hard Intervention.");
-      // Trigger UI lockout or notification here
+    if (msg.type === "SIGNAL") {
+        const profile = ModeProfiles[currentMode];
+        let gain = 0;
+
+        if (msg.data === "key") gain = msg.repeat ? 2.5 : 1;
+        if (msg.data === "scroll") gain = 5;
+
+        // Apply mode weights
+        score = Math.min(100, score + (gain * profile.weights.interaction));
     }
-  } else if (score > profile.thresholds.T1) {
-    console.log("🟡 T1 REACHED: Soft Calming active.");
-  }
-}, 2000);
+});
+
+// Cooldown and Heartbeat
+setInterval(() => {
+    score = Math.max(0, score - 0.5); // Natural decay
+    
+    // Broadcast score to content script to update UI
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        if (tabs[0]) {
+            chrome.tabs.sendMessage(tabs[0].id, {type: "UPDATE_STRESS", score: score});
+        }
+    });
+}, 200);
